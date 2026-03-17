@@ -1,0 +1,992 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: Anime RPG Bot Admin API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: stats
+    description: Dashboard stats
+  - name: users
+    description: User management
+  - name: groups
+    description: Group management
+  - name: characters
+    description: Character management
+  - name: cards
+    description: Card management
+  - name: ads
+    description: Ad management
+  - name: tournaments
+    description: Tournament management
+  - name: market
+    description: Market management
+  - name: guilds
+    description: Guild management
+  - name: broadcast
+    description: Broadcast operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /stats:
+    get:
+      operationId: getDashboardStats
+      tags: [stats]
+      summary: Get dashboard statistics
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersListResponse"
+
+  /users/{userId}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get user by ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /groups:
+    get:
+      operationId: listGroups
+      tags: [groups]
+      summary: List all groups
+      responses:
+        "200":
+          description: Groups list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupsListResponse"
+
+  /groups/{groupId}:
+    delete:
+      operationId: deleteGroup
+      tags: [groups]
+      summary: Delete a group
+      parameters:
+        - name: groupId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /characters:
+    get:
+      operationId: listCharacters
+      tags: [characters]
+      summary: List all characters
+      responses:
+        "200":
+          description: Characters list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CharactersListResponse"
+    post:
+      operationId: createCharacter
+      tags: [characters]
+      summary: Create a character (multipart with image)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/CreateCharacterRequest"
+      responses:
+        "201":
+          description: Created character
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Character"
+
+  /characters/{characterId}:
+    get:
+      operationId: getCharacter
+      tags: [characters]
+      summary: Get character by ID
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Character
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Character"
+    put:
+      operationId: updateCharacter
+      tags: [characters]
+      summary: Update character
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/CreateCharacterRequest"
+      responses:
+        "200":
+          description: Updated character
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Character"
+    delete:
+      operationId: deleteCharacter
+      tags: [characters]
+      summary: Delete character
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /cards:
+    get:
+      operationId: listCards
+      tags: [cards]
+      summary: List all cards
+      responses:
+        "200":
+          description: Cards list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardsListResponse"
+    post:
+      operationId: createCard
+      tags: [cards]
+      summary: Create a card (multipart with image)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/CreateCardRequest"
+      responses:
+        "201":
+          description: Created card
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Card"
+
+  /cards/{cardId}:
+    get:
+      operationId: getCard
+      tags: [cards]
+      summary: Get card by ID
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Card
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Card"
+    put:
+      operationId: updateCard
+      tags: [cards]
+      summary: Update card
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/CreateCardRequest"
+      responses:
+        "200":
+          description: Updated card
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Card"
+    delete:
+      operationId: deleteCard
+      tags: [cards]
+      summary: Delete card
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /ads:
+    get:
+      operationId: listAds
+      tags: [ads]
+      summary: List all ads
+      responses:
+        "200":
+          description: Ads list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdsListResponse"
+    post:
+      operationId: createAd
+      tags: [ads]
+      summary: Create an ad
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAdRequest"
+      responses:
+        "201":
+          description: Created ad
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ad"
+
+  /ads/{adId}:
+    put:
+      operationId: updateAd
+      tags: [ads]
+      summary: Update ad
+      parameters:
+        - name: adId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAdRequest"
+      responses:
+        "200":
+          description: Updated ad
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ad"
+    delete:
+      operationId: deleteAd
+      tags: [ads]
+      summary: Delete ad
+      parameters:
+        - name: adId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /ads/{adId}/toggle:
+    patch:
+      operationId: toggleAd
+      tags: [ads]
+      summary: Toggle ad status
+      parameters:
+        - name: adId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Updated ad
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ad"
+
+  /tournaments:
+    get:
+      operationId: listTournaments
+      tags: [tournaments]
+      summary: List all tournaments
+      responses:
+        "200":
+          description: Tournaments list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TournamentsListResponse"
+    post:
+      operationId: createTournament
+      tags: [tournaments]
+      summary: Create a tournament
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTournamentRequest"
+      responses:
+        "201":
+          description: Created tournament
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tournament"
+
+  /tournaments/{tournamentId}:
+    delete:
+      operationId: deleteTournament
+      tags: [tournaments]
+      summary: Delete tournament
+      parameters:
+        - name: tournamentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+    patch:
+      operationId: updateTournamentStatus
+      tags: [tournaments]
+      summary: Update tournament status
+      parameters:
+        - name: tournamentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [active, ended, pending]
+              required: [status]
+      responses:
+        "200":
+          description: Updated tournament
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tournament"
+
+  /market:
+    get:
+      operationId: listMarketItems
+      tags: [market]
+      summary: List market items
+      responses:
+        "200":
+          description: Market items
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketListResponse"
+    post:
+      operationId: addMarketItem
+      tags: [market]
+      summary: Add item to market
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddMarketItemRequest"
+      responses:
+        "201":
+          description: Added market item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketItem"
+
+  /market/{marketId}:
+    delete:
+      operationId: removeMarketItem
+      tags: [market]
+      summary: Remove market item
+      parameters:
+        - name: marketId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /guilds:
+    get:
+      operationId: listGuilds
+      tags: [guilds]
+      summary: List all guilds
+      responses:
+        "200":
+          description: Guilds list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuildsListResponse"
+
+  /broadcast:
+    post:
+      operationId: sendBroadcast
+      tags: [broadcast]
+      summary: Send broadcast to all groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BroadcastRequest"
+      responses:
+        "200":
+          description: Broadcast result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BroadcastResult"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required: [success, message]
+
+    DashboardStats:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+        totalGroups:
+          type: integer
+        totalCoins:
+          type: integer
+        activeAds:
+          type: integer
+        activeTournaments:
+          type: integer
+        totalCharacters:
+          type: integer
+        totalCards:
+          type: integer
+        premiumUsers:
+          type: integer
+      required: [totalUsers, totalGroups, totalCoins, activeAds, activeTournaments, totalCharacters, totalCards, premiumUsers]
+
+    User:
+      type: object
+      properties:
+        userId:
+          type: integer
+        username:
+          type: string
+          nullable: true
+        firstName:
+          type: string
+          nullable: true
+        coins:
+          type: integer
+        bank:
+          type: integer
+        xp:
+          type: integer
+        level:
+          type: integer
+        premiumUntil:
+          type: string
+          nullable: true
+        joinedAt:
+          type: string
+        charactersCount:
+          type: integer
+        cardsCount:
+          type: integer
+      required: [userId, coins, bank, xp, level, joinedAt, charactersCount, cardsCount]
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        coins:
+          type: integer
+        bank:
+          type: integer
+        xp:
+          type: integer
+        level:
+          type: integer
+        premiumUntil:
+          type: string
+          nullable: true
+
+    UsersListResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required: [users, total, page, limit]
+
+    Group:
+      type: object
+      properties:
+        id:
+          type: integer
+        chatId:
+          type: string
+        groupName:
+          type: string
+          nullable: true
+        addedAt:
+          type: string
+      required: [id, chatId, addedAt]
+
+    GroupsListResponse:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/Group"
+        total:
+          type: integer
+      required: [groups, total]
+
+    Character:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        rarity:
+          type: string
+        power:
+          type: integer
+        kills:
+          type: integer
+        skills:
+          type: string
+          nullable: true
+        price:
+          type: integer
+        imagePath:
+          type: string
+          nullable: true
+      required: [id, name, rarity, power, kills, price]
+
+    CreateCharacterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        rarity:
+          type: string
+        power:
+          type: integer
+        kills:
+          type: integer
+        skills:
+          type: string
+        price:
+          type: integer
+        image:
+          type: string
+          format: binary
+      required: [name, rarity, power, kills, price]
+
+    CharactersListResponse:
+      type: object
+      properties:
+        characters:
+          type: array
+          items:
+            $ref: "#/components/schemas/Character"
+        total:
+          type: integer
+      required: [characters, total]
+
+    Card:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        rarity:
+          type: string
+        power:
+          type: integer
+        skills:
+          type: string
+          nullable: true
+        price:
+          type: integer
+        imagePath:
+          type: string
+          nullable: true
+      required: [id, name, rarity, power, price]
+
+    CreateCardRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        rarity:
+          type: string
+        power:
+          type: integer
+        skills:
+          type: string
+        price:
+          type: integer
+        image:
+          type: string
+          format: binary
+      required: [name, rarity, power, price]
+
+    CardsListResponse:
+      type: object
+      properties:
+        cards:
+          type: array
+          items:
+            $ref: "#/components/schemas/Card"
+        total:
+          type: integer
+      required: [cards, total]
+
+    Ad:
+      type: object
+      properties:
+        id:
+          type: integer
+        adText:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive]
+        createdAt:
+          type: string
+      required: [id, adText, status, createdAt]
+
+    CreateAdRequest:
+      type: object
+      properties:
+        adText:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive]
+          default: active
+      required: [adText]
+
+    AdsListResponse:
+      type: object
+      properties:
+        ads:
+          type: array
+          items:
+            $ref: "#/components/schemas/Ad"
+        total:
+          type: integer
+      required: [ads, total]
+
+    Tournament:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        status:
+          type: string
+          enum: [pending, active, ended]
+        rewardType:
+          type: string
+          enum: [coins, card, character, premium]
+        rewardValue:
+          type: string
+        participantCount:
+          type: integer
+        createdAt:
+          type: string
+      required: [id, name, status, rewardType, rewardValue, participantCount, createdAt]
+
+    CreateTournamentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        rewardType:
+          type: string
+          enum: [coins, card, character, premium]
+        rewardValue:
+          type: string
+      required: [name, rewardType, rewardValue]
+
+    TournamentsListResponse:
+      type: object
+      properties:
+        tournaments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tournament"
+        total:
+          type: integer
+      required: [tournaments, total]
+
+    MarketItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        itemType:
+          type: string
+          enum: [character, card]
+        itemId:
+          type: integer
+        price:
+          type: integer
+        sellerId:
+          type: integer
+          nullable: true
+        itemName:
+          type: string
+          nullable: true
+        itemRarity:
+          type: string
+          nullable: true
+        itemPower:
+          type: integer
+          nullable: true
+        imagePath:
+          type: string
+          nullable: true
+      required: [id, itemType, itemId, price]
+
+    AddMarketItemRequest:
+      type: object
+      properties:
+        itemType:
+          type: string
+          enum: [character, card]
+        itemId:
+          type: integer
+        price:
+          type: integer
+      required: [itemType, itemId, price]
+
+    MarketListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarketItem"
+        total:
+          type: integer
+      required: [items, total]
+
+    Guild:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        ownerId:
+          type: integer
+        level:
+          type: integer
+        coins:
+          type: integer
+        memberCount:
+          type: integer
+      required: [id, name, ownerId, level, coins, memberCount]
+
+    GuildsListResponse:
+      type: object
+      properties:
+        guilds:
+          type: array
+          items:
+            $ref: "#/components/schemas/Guild"
+        total:
+          type: integer
+      required: [guilds, total]
+
+    BroadcastRequest:
+      type: object
+      properties:
+        message:
+          type: string
+      required: [message]
+
+    BroadcastResult:
+      type: object
+      properties:
+        sent:
+          type: integer
+        failed:
+          type: integer
+        total:
+          type: integer
+      required: [sent, failed, total]
