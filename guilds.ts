@@ -1,35 +1,11 @@
-import { Router, type IRouter } from "express";
-import { db } from "@workspace/db";
-import { guildsTable, guildMembersTable } from "@workspace/db";
-import { eq, count } from "drizzle-orm";
+import { pgTable, serial, text, integer, bigint } from "drizzle-orm/pg-core";
 
-const router: IRouter = Router();
-
-router.get("/guilds", async (_req, res) => {
-  try {
-    const guilds = await db.select().from(guildsTable).orderBy(guildsTable.id);
-    const result = await Promise.all(
-      guilds.map(async (g) => {
-        const [mCount] = await db
-          .select({ count: count() })
-          .from(guildMembersTable)
-          .where(eq(guildMembersTable.guildId, g.id));
-        return {
-          id: g.id,
-          name: g.name,
-          ownerId: Number(g.ownerId),
-          level: g.level,
-          coins: g.coins,
-          memberCount: mCount.count,
-        };
-      })
-    );
-    const [totalResult] = await db.select({ count: count() }).from(guildsTable);
-    res.json({ guilds: result, total: totalResult.count });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch guilds" });
-  }
+export const guildsTable = pgTable("guilds", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  ownerId: bigint("owner_id", { mode: "number" }).notNull(),
+  level: integer("level").notNull().default(1),
+  coins: integer("coins").notNull().default(0),
 });
 
-export default router;
+export type Guild = typeof guildsTable.$inferSelect;
