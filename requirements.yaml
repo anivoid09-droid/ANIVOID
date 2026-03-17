@@ -1,0 +1,18 @@
+packages:
+  "framer-motion": "For fluid page transitions and animated micro-interactions"
+  "recharts": "For rendering beautiful dashboard analytics charts"
+  "react-hook-form": "For robust form state management in admin forms"
+  "@hookform/resolvers": "For Zod schema validation integration"
+  "date-fns": "For formatting user joined dates and timestamps"
+  "lucide-react": "For beautiful, consistent iconography across the dashboard"
+  "zod": "For strict schema validation on all admin forms"
+
+images:
+  - path: "artifacts/admin-dashboard/public/images/cyber-bg.png"
+    description: "Dark cyberpunk anime aesthetic background, deep space void with glowing neon purple and electric blue abstract lines, subtle glassmorphism geometric shapes, professional and sleek"
+    aspect_ratio: "16:9"
+
+notes:
+  - Using generated React Query hooks from @workspace/api-client-react
+  - Image uploads require passing Blob/File objects to the generated hooks
+  - API handles multipart/form-data directly via FormData in the generated client
